@@ -1,0 +1,22 @@
+# ── VPC ─────────────────────────────────────────────────────────────────────
+aws_region         = "us-east-1"
+environment        = "staging"
+project_name       = "octabyteai"
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+# ── Database ─────────────────────────────────────────────────────────────────
+db_instance_class = "db.t3.micro"
+db_name           = "octabyteai"
+db_username       = "octabyteai_admin"
+
+# ── ECS / Application ─────────────────────────────────────────────────────────
+ecs_task_cpu    = 256
+ecs_task_memory = 512
+app_port        = 3000
+desired_count   = 1
+
+# ── TLS / Monitoring ──────────────────────────────────────────────────────────
+# certificate_arn  = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/XXXX"
+alarm_email        = "ops@octabyte.ai"
+log_retention_days = 30

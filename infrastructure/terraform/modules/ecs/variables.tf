@@ -1,0 +1,17 @@
+variable "project_name"       { type = string }
+variable "environment"        { type = string }
+variable "vpc_id"             { type = string }
+variable "private_subnet_ids" { type = list(string) }
+variable "security_group_id"  { type = string }
+variable "target_group_arn"   { type = string }
+variable "container_image"    { type = string }
+variable "container_name"     { type = string }
+variable "app_port"           { type = number }
+variable "cpu"                { type = number }
+variable "memory"             { type = number }
+variable "desired_count"      { type = number }
+variable "db_secret_arn"      { type = string }
+variable "db_host"            { type = string }
+variable "db_name"            { type = string }
+variable "aws_region"         { type = string }
+variable "log_retention_days" { type = number }

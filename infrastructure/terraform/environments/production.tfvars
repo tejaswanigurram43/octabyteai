@@ -1,0 +1,14 @@
+environment        = "production"
+project_name       = "octabyteai"
+aws_region         = "us-east-1"
+vpc_cidr           = "10.1.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+db_instance_class  = "db.t3.small"
+db_name            = "octabyteai"
+db_username        = "octabyteai_admin"
+ecs_task_cpu       = 512
+ecs_task_memory    = 1024
+desired_count      = 2
+app_port           = 3000
+alarm_email        = "ops-prod@octabyte.ai"
+log_retention_days = 90

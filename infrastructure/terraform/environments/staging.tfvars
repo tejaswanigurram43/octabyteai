@@ -1,0 +1,14 @@
+environment        = "staging"
+project_name       = "octabyteai"
+aws_region         = "us-east-1"
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+db_instance_class  = "db.t3.micro"
+db_name            = "octabyteai"
+db_username        = "octabyteai_admin"
+ecs_task_cpu       = 256
+ecs_task_memory    = 512
+desired_count      = 1
+app_port           = 3000
+alarm_email        = "ops-staging@octabyte.ai"
+log_retention_days = 7
