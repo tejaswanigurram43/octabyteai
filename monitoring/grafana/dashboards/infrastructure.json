@@ -1,0 +1,62 @@
+{
+  "id": null,
+  "uid": "infra-overview",
+  "title": "Infrastructure Overview",
+  "description": "ECS, RDS, and ALB infrastructure metrics",
+  "tags": ["octabyteai", "infrastructure"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "timeseries", "title": "ECS CPU Utilization (%)",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "100 - (avg by (instance)(rate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)", "legendFormat": "CPU %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 60}, {"color": "red", "value": 80}] } } }
+    },
+    {
+      "id": 2, "type": "timeseries", "title": "Memory Usage (%)",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100", "legendFormat": "Memory %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 70}, {"color": "red", "value": 85}] } } }
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Disk Space Available (%)",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "(node_filesystem_avail_bytes{mountpoint='/'} / node_filesystem_size_bytes{mountpoint='/'}) * 100", "legendFormat": "Disk Free %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } }
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Network Bandwidth (bytes/s)",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [
+        { "expr": "rate(node_network_receive_bytes_total{device='eth0'}[5m])", "legendFormat": "RX" },
+        { "expr": "rate(node_network_transmit_bytes_total{device='eth0'}[5m])", "legendFormat": "TX" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" } }
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "PostgreSQL Active Connections",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "pg_stat_activity_count{state='active'}", "legendFormat": "Active Connections" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "PostgreSQL Transaction Rate",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [
+        { "expr": "rate(pg_stat_database_xact_commit{datname='octabyteai'}[5m])", "legendFormat": "Commits/s" },
+        { "expr": "rate(pg_stat_database_xact_rollback{datname='octabyteai'}[5m])", "legendFormat": "Rollbacks/s" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ops" } }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+version: "3.9"
+
+networks:
+  test-network:
+    driver: bridge
+
+services:
+  postgres-test:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: octabyteai_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    tmpfs:
+      - /var/lib/postgresql/data   # in-memory — fast and clean every run
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d octabyteai_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app-test:
+    build:
+      context: ./app
+      target: production
+    command: >
+      sh -c "
+        PGPASSWORD=postgres psql -h postgres-test -U postgres -d octabyteai_test
+          -f /app/src/migrations/001_initial.sql &&
+        npm test
+      "
+    environment:
+      NODE_ENV: test
+      DB_HOST: postgres-test
+      DB_PORT: 5432
+      DB_NAME: octabyteai_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - test-network

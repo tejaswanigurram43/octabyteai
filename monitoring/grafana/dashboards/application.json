@@ -1,0 +1,110 @@
+{
+  "id": null,
+  "uid": "app-overview",
+  "title": "Application Overview",
+  "description": "HTTP request rate, error rate, latency, and Node.js metrics",
+  "tags": ["octabyteai", "application"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Request Rate (req/s)",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "sum(rate(request_count[5m]))", "legendFormat": "req/s" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 100}, {"color": "red", "value": 500}] } } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Error Rate (%)",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "sum(rate(request_count{status=~'5..'}[5m])) / sum(rate(request_count[5m])) * 100", "legendFormat": "Error %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}] } } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "p50 Latency",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "histogram_quantile(0.50, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p50" }],
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.5}, {"color": "red", "value": 1}] } } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "p95 Latency",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p95" }],
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 2}] } } }
+    },
+    {
+      "id": 5, "type": "stat", "title": "p99 Latency",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "histogram_quantile(0.99, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p99" }],
+      "fieldConfig": { "defaults": { "unit": "s", "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 2}, {"color": "red", "value": 5}] } } }
+    },
+    {
+      "id": 6, "type": "stat", "title": "Active Connections",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "pg_stat_activity_count{state='active'}", "legendFormat": "DB Connections" }],
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 50}, {"color": "red", "value": 80}] } } }
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Request Rate by Status Class",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [
+        { "expr": "sum(rate(request_count{status=~'2..'}[5m]))", "legendFormat": "2xx" },
+        { "expr": "sum(rate(request_count{status=~'4..'}[5m]))", "legendFormat": "4xx" },
+        { "expr": "sum(rate(request_count{status=~'5..'}[5m]))", "legendFormat": "5xx" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Error Rate (%)",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "sum(rate(request_count{status=~'5..'}[5m])) / sum(rate(request_count[5m])) * 100", "legendFormat": "Error Rate %" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } }
+    },
+    {
+      "id": 9, "type": "timeseries", "title": "Latency Percentiles (p50/p95/p99)",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, rate(request_duration_seconds_bucket[5m]))", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "Node.js Heap Memory",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [
+        { "expr": "nodejs_heap_size_used_bytes", "legendFormat": "Heap Used" },
+        { "expr": "nodejs_heap_size_total_bytes", "legendFormat": "Heap Total" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "Node.js Event Loop Lag",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "nodejs_eventloop_lag_seconds", "legendFormat": "Event Loop Lag" }],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 12, "type": "table", "title": "Top Routes by Request Count",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "datasource": { "uid": "prometheus-local" },
+      "targets": [{ "expr": "topk(10, sum by (route, method)(rate(request_count[5m])))", "legendFormat": "{{method}} {{route}}", "instant": true }],
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "options": { "sortBy": [{ "displayName": "Value", "desc": true }] }
+    }
+  ]
+}
